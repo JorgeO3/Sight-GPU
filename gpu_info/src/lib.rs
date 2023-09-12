@@ -1,14 +1,8 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+// Bindings for Nvidia gpus
+pub mod nvidia;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// Bindings for Intel gpus
+pub mod intel;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+// Bindings for Amd gpus
+pub mod amd;
