@@ -1,1 +1,1 @@
-# SIGHT GPU
+# Sight-GPU
