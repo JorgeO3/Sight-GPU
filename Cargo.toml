@@ -1,5 +1,5 @@
 [package]
-name = "rust-template"
+name = "sight-gpu"
 edition = "2021"
 version = "0.1.0"
 rust-version = "1.70.0"
@@ -13,7 +13,14 @@ readme = "README.md"
 license-file = "LICENSE"
 exclude = ["/.github/*", "/Makefile.toml", "/clippy.toml", "/rustfmt.toml"]
 
+
+[lib]
+crate-type = ["lib"]
+
+
 [dependencies]
+crossterm = "0.27.0"
+ratatui = "0.23.0"
 
 
 [dev-dependencies]
