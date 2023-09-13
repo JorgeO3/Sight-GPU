@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use ratatui::{
     backend::Backend,
     layout::Alignment,

@@ -1,9 +1,23 @@
-fn main() {
-    // Haz que Cargo recompile tu proyecto si se modifica cualquiera de las bibliotecas de C.
-    println!("cargo:rerun-if-changed=path/to/library.c");
-    println!("cargo:rerun-if-changed=path/to/headers.h");
+extern crate cc;
 
-    // Enlace con las bibliotecas de C
-    println!("cargo:rustc-link-lib=static=name_of_static_lib");
-    println!("cargo:rustc-link-lib=dylib=name_of_dynamic_lib");
+fn main() {
+    // Compila la librería para NVIDIA
+    println!("cargo:rerun-if-changed=c_src/nvidia/nvidia.c");
+    println!("cargo:rerun-if-changed=src/nvidia.rs");
+    cc::Build::new()
+        .file("c_src/nvidia/nvidia.c")
+        .include("c_src/nvidia")  // Para incluir archivos de cabecera
+        .compile("libnvidia.so");
+
+    // // Compila la librería para AMD
+    // cc::Build::new()
+    //     .file("c_src/amd/amd.c")
+    //     .include("c_src/amd")
+    //     .compile("libamd.a");
+
+    // // Compila la librería para Intel
+    // cc::Build::new()
+    //     .file("c_src/intel/intel.c")
+    //     .include("c_src/intel")
+    //     .compile("libintel.a");
 }

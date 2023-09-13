@@ -4,11 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[build]
-script = "build.rs"
-
+[[bin]]
+name = "gpu_info"
+path = "src/main.rs"
 
 [build-dependencies]
 bindgen = "0.68.1"
+cc = "1.0.83"
 
+[dependencies]
+libc = "0.2.148"
