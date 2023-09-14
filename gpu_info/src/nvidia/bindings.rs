@@ -1,4 +1,6 @@
-use libc::{c_char, c_double, c_int, c_uint, c_ulonglong, c_void};
+#![allow(unused)]
+
+use libc::{c_char, c_uint, c_ulonglong, c_void};
 
 /// Maximum length for GPU-related names (e.g., device names).
 ///
@@ -42,88 +44,88 @@ type NvmlDeviceT = *mut c_void;
 #[derive(Debug)]
 pub enum NvmlReturnT {
     /// The operation was successful.
-    NvmlSuccess = 0,
+    Success = 0,
 
     /// NVML has not been initialized.
-    NvmlErrorUninitialized = 1,
+    ErrorUninitialized = 1,
 
     /// One or more of the arguments passed to the function are invalid.
-    NvmlErrorInvalidArgument = 2,
+    ErrorInvalidArgument = 2,
 
     /// The platform does not support this operation.
-    NvmlErrorNotSupported = 3,
+    ErrorNotSupported = 3,
 
     /// The current user does not have permission for this operation.
-    NvmlErrorNoPermission = 4,
+    ErrorNoPermission = 4,
 
     /// NVML has already been initialized.
-    NvmlErrorAlreadyInitialized = 5,
+    ErrorAlreadyInitialized = 5,
 
     /// The requested item was not found.
-    NvmlErrorNotFound = 6,
+    ErrorNotFound = 6,
 
     /// The provided buffer is not large enough.
-    NvmlErrorInsufficientSize = 7,
+    ErrorInsufficientSize = 7,
 
     /// The GPU does not have enough power for the operation.
-    NvmlErrorInsufficientPower = 8,
+    ErrorInsufficientPower = 8,
 
     /// The NVIDIA driver is not loaded.
-    NvmlErrorDriverNotLoaded = 9,
+    ErrorDriverNotLoaded = 9,
 
     /// The function call timed out.
-    NvmlErrorTimeout = 10,
+    ErrorTimeout = 10,
 
     /// There was an IRQ issue during the function call.
-    NvmlErrorIrqIssue = 11,
+    ErrorIrqIssue = 11,
 
     /// NVML shared library couldn't be found or loaded.
-    NvmlErrorLibraryNotFound = 12,
+    ErrorLibraryNotFound = 12,
 
     /// A required function in the library could not be found.
-    NvmlErrorFunctionNotFound = 13,
+    ErrorFunctionNotFound = 13,
 
     /// GPU's infoROM is corrupted.
-    NvmlErrorCorruptedInforom = 14,
+    ErrorCorruptedInforom = 14,
 
     /// GPU has fallen off the bus or is otherwise inaccessible.
-    NvmlErrorGpuIsLost = 15,
+    ErrorGpuIsLost = 15,
 
     /// GPU requires a reset.
-    NvmlErrorResetRequired = 16,
+    ErrorResetRequired = 16,
 
     /// The GPU operation failed due to the operating system.
-    NvmlErrorOperatingSystem = 17,
+    ErrorOperatingSystem = 17,
 
     /// RM (driver) version mismatch with NVML.
-    NvmlErrorLibRmVersionMismatch = 18,
+    ErrorLibRmVersionMismatch = 18,
 
     /// The GPU is already being used and cannot be used again until it is no longer in use.
-    NvmlErrorInUse = 19,
+    ErrorInUse = 19,
 
     /// Insufficient memory to complete the operation.
-    NvmlErrorMemory = 20,
+    ErrorMemory = 20,
 
     /// The operation could not be performed because the information was not available.
-    NvmlErrorNoData = 21,
+    ErrorNoData = 21,
 
     /// The GPU does not support ECC.
-    NvmlErrorVgpuEccNotSupported = 22,
+    ErrorVgpuEccNotSupported = 22,
 
     /// Insufficient resources to perform the operation.
-    NvmlErrorInsufficientResources = 23,
+    ErrorInsufficientResources = 23,
 
     /// This frequency does not support the operation.
-    NvmlErrorFreqNotSupported = 24,
+    ErrorFreqNotSupported = 24,
 
     /// The NVML library has a different version than the client.
-    NvmlErrorArgumentVersionMismatch = 25,
+    ErrorArgumentVersionMismatch = 25,
 
     /// This function is deprecated and should not be used.
-    NvmlErrorDeprecated = 26,
+    ErrorDeprecated = 26,
 
     /// An unknown internal error has occurred.
-    NvmlErrorUnknown = 999,
+    ErrorUnknown = 999,
 }
 
 /// Structure representing the memory information of a GPU device.
@@ -178,11 +180,11 @@ pub struct NvmlProcessInfoT {
     compute_instance_id: c_uint,
 }
 
-/// External bindings to the NVIDIA Management Library (NVML).
-///
-/// This block provides Rust-friendly interfaces to the functions exposed by 
-/// the NVML library, allowing for interaction with NVIDIA GPUs and obtaining 
-/// various metrics and information about them.
+// External bindings to the NVIDIA Management Library (NVML).
+//
+// This block provides Rust-friendly interfaces to the functions exposed by
+// the NVML library, allowing for interaction with NVIDIA GPUs and obtaining
+// various metrics and information about them.
 #[rustfmt::skip]
 #[link(name = "nvidia-ml", kind = "dylib")]
 extern "C" {

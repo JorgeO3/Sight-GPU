@@ -65,8 +65,6 @@ DeviceStaticInfo *fetch_all_static_device_info(unsigned int *deviceCount)
         nvmlDeviceGetMaxClockInfo(device, NVML_CLOCK_GRAPHICS, &(infoArray[i].maxGpuFrequency));
         nvmlDeviceGetMaxClockInfo(device, NVML_CLOCK_MEM, &(infoArray[i].maxMemoryFrequency));
         nvmlDeviceGetUtilizationRates(device, NULL);
-        nvmlDeviceGetComputeRunningProcesses_v3(device, &(infoArray[i].processCount), infoArray[i].processes);
-        nvmlDeviceGetGraphicsRunningProcesses_v3(device, &(infoArray[i].processCount), infoArray[i].processes);
     }
 
     nvmlShutdown();

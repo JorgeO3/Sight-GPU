@@ -92,47 +92,56 @@ pub enum NvmlError {
 
 impl From<NvmlReturnT> for NvmlError {
     #[rustfmt::skip]
-    fn from(err: &NvmlReturnT) -> Self {
-        match *err {
-            NvmlReturnT::NvmlSuccess => NvmlError::NvmlSuccess,
-            NvmlReturnT::NvmlErrorUninitialized => NvmlError::NVMLERRORUNINITIALIZED,
-            NvmlReturnT::NvmlErrorInvalidArgument => NvmlError::NVMLERRORINVALIDARGUMENT,
-            NvmlReturnT::NvmlErrorNotSupported => NvmlError::NVMLERRORNOTSUPPORTED,
-            NvmlReturnT::NvmlErrorNoPermission => NvmlError::NVMLERRORNOPERMISSION,
-            NvmlReturnT::NvmlErrorAlreadyInitialized => NvmlError::NVMLERRORALREADYINITIALIZED,
-            NvmlReturnT::NvmlErrorNotFound => NvmlError::NVMLERRORNOTFOUND,
-            NvmlReturnT::NvmlErrorInsufficientSize => NvmlError::NVMLERRORINSUFFICIENTSIZE,
-            NvmlReturnT::NvmlErrorInsufficientPower => NvmlError::NVMLERRORINSUFFICIENTPOWER,
-            NvmlReturnT::NvmlErrorDriverNotLoaded => NvmlError::NVMLERRORDRIVERNOTLOADED,
-            NvmlReturnT::NvmlErrorTimeout => NvmlError::NVMLERRORTIMEOUT,
-            NvmlReturnT::NvmlErrorIrqIssue => NvmlError::NVMLERRORIRQISSUE,
-            NvmlReturnT::NvmlErrorLibraryNotFound => NvmlError::NVMLERRORLIBRARYNOTFOUND,
-            NvmlReturnT::NvmlErrorFunctionNotFound => NvmlError::NVMLERRORFUNCTIONNOTFOUND,
-            NvmlReturnT::NvmlErrorCorruptedInforom => NvmlError::NVMLERRORCORRUPTEDINFOROM,
-            NvmlReturnT::NvmlErrorGpuIsLost => NvmlError::NVMLERRORGPUISLOST,
-            NvmlReturnT::NvmlErrorResetRequired => NvmlError::NVMLERRORRESETREQUIRED,
-            NvmlReturnT::NvmlErrorOperatingSystem => NvmlError::NVMLERROROPERATINGSYSTEM,
-            NvmlReturnT::NvmlErrorLibRmVersionMismatch => NvmlError::NVMLERRORLIBRMVERSIONMISMATCH,
-            NvmlReturnT::NvmlErrorInUse => NvmlError::NVMLERRORINUSE,
-            NvmlReturnT::NvmlErrorMemory => NvmlError::NVMLERRORMEMORY,
-            NvmlReturnT::NvmlErrorNoData => NvmlError::NVMLERRORNODATA,
-            NvmlReturnT::NvmlErrorVgpuEccNotSupported => NvmlError::NVMLERRORVGPUECCNOTSUPPORTED,
-            NvmlReturnT::NvmlErrorInsufficientResources => NvmlError::NVMLERRORINSUFFICIENTRESOURCES,
-            NvmlReturnT::NvmlErrorFreqNotSupported => NvmlError::NVMLERRORFREQNOTSUPPORTED,
-            NvmlReturnT::NvmlErrorArgumentVersionMismatch => NvmlError::NVMLERRORARGUMENTVERSIONMISMATCH,
-            NvmlReturnT::NvmlErrorDeprecated => NvmlError::NVMLERRORDEPRECATED,
-            NvmlReturnT::NvmlErrorUnknown => NvmlError::NVMLERRORUNKNOWN,
+    fn from(err: NvmlReturnT) -> Self {
+        match err {
+            NvmlReturnT::Success => NvmlError::NvmlSuccess,
+            NvmlReturnT::ErrorUninitialized => NvmlError::NVMLERRORUNINITIALIZED,
+            NvmlReturnT::ErrorInvalidArgument => NvmlError::NVMLERRORINVALIDARGUMENT,
+            NvmlReturnT::ErrorNotSupported => NvmlError::NVMLERRORNOTSUPPORTED,
+            NvmlReturnT::ErrorNoPermission => NvmlError::NVMLERRORNOPERMISSION,
+            NvmlReturnT::ErrorAlreadyInitialized => NvmlError::NVMLERRORALREADYINITIALIZED,
+            NvmlReturnT::ErrorNotFound => NvmlError::NVMLERRORNOTFOUND,
+            NvmlReturnT::ErrorInsufficientSize => NvmlError::NVMLERRORINSUFFICIENTSIZE,
+            NvmlReturnT::ErrorInsufficientPower => NvmlError::NVMLERRORINSUFFICIENTPOWER,
+            NvmlReturnT::ErrorDriverNotLoaded => NvmlError::NVMLERRORDRIVERNOTLOADED,
+            NvmlReturnT::ErrorTimeout => NvmlError::NVMLERRORTIMEOUT,
+            NvmlReturnT::ErrorIrqIssue => NvmlError::NVMLERRORIRQISSUE,
+            NvmlReturnT::ErrorLibraryNotFound => NvmlError::NVMLERRORLIBRARYNOTFOUND,
+            NvmlReturnT::ErrorFunctionNotFound => NvmlError::NVMLERRORFUNCTIONNOTFOUND,
+            NvmlReturnT::ErrorCorruptedInforom => NvmlError::NVMLERRORCORRUPTEDINFOROM,
+            NvmlReturnT::ErrorGpuIsLost => NvmlError::NVMLERRORGPUISLOST,
+            NvmlReturnT::ErrorResetRequired => NvmlError::NVMLERRORRESETREQUIRED,
+            NvmlReturnT::ErrorOperatingSystem => NvmlError::NVMLERROROPERATINGSYSTEM,
+            NvmlReturnT::ErrorLibRmVersionMismatch => NvmlError::NVMLERRORLIBRMVERSIONMISMATCH,
+            NvmlReturnT::ErrorInUse => NvmlError::NVMLERRORINUSE,
+            NvmlReturnT::ErrorMemory => NvmlError::NVMLERRORMEMORY,
+            NvmlReturnT::ErrorNoData => NvmlError::NVMLERRORNODATA,
+            NvmlReturnT::ErrorVgpuEccNotSupported => NvmlError::NVMLERRORVGPUECCNOTSUPPORTED,
+            NvmlReturnT::ErrorInsufficientResources => NvmlError::NVMLERRORINSUFFICIENTRESOURCES,
+            NvmlReturnT::ErrorFreqNotSupported => NvmlError::NVMLERRORFREQNOTSUPPORTED,
+            NvmlReturnT::ErrorArgumentVersionMismatch => NvmlError::NVMLERRORARGUMENTVERSIONMISMATCH,
+            NvmlReturnT::ErrorDeprecated => NvmlError::NVMLERRORDEPRECATED,
+            NvmlReturnT::ErrorUnknown => NvmlError::NVMLERRORUNKNOWN,
         }
     }
 }
 
-fn init_nvml() -> Result<(), NvmlError> {
-    let reuslt = unsafe { nvmlInit() };
-    todo!();
-    match reuslt {
-        NvmlReturnT::NvmlSuccess => Ok(()),
-        _ => Err(NvmlErrror::from(&result)),
+/// Initializes the NVML library.
+/// This function wraps around the unsafe `nvmlInit` function and provides a safe interface.
+pub fn init_nvml() -> Result<(), NvmlError> {
+    let result = unsafe { nvmlInit() };
+    match result {
+        NvmlReturnT::Success => Ok(()),
+        _ => Err(NvmlError::from(result)),
     }
 }
 
-fn shutdown_nvml() {}
+/// Shuts down the NVML library.
+/// This function wraps around the unsafe `nvmlShutdown` function and provides a safe interface.
+pub fn shutdown_nvml() -> Result<(), NvmlError> {
+    let result = unsafe { nvmlShutdown() };
+    match result {
+        NvmlReturnT::Success => Ok(()),
+        _ => Err(NvmlError::from(result)),
+    }
+}
