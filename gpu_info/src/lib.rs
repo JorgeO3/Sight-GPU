@@ -1,8 +1,7 @@
-// Bindings for Nvidia gpus
+pub mod amd;
+pub mod intel;
 pub mod nvidia;
 
-// Bindings for Intel gpus
-pub mod intel;
-
-// Bindings for Amd gpus
-pub mod amd;
+pub use amd::*;
+pub use intel::*;
+pub use nvidia::*;
