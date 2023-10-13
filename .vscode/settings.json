@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "nvml.h": "c"
+        "nvml.h": "c",
+        "termios.h": "c",
+        "ioctl.h": "c"
     }
 }

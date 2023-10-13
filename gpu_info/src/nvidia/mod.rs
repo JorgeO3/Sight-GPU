@@ -1,6 +1,7 @@
 mod bindings;
 
 use bindings::*;
+use libc::c_uint;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -126,22 +127,67 @@ impl From<NvmlReturnT> for NvmlError {
     }
 }
 
-/// Initializes the NVML library.
-/// This function wraps around the unsafe `nvmlInit` function and provides a safe interface.
-pub fn init_nvml() -> Result<(), NvmlError> {
-    let result = unsafe { nvmlInit() };
-    match result {
-        NvmlReturnT::Success => Ok(()),
-        _ => Err(NvmlError::from(result)),
+#[derive(Debug)]
+pub struct SafeNvmlDeviceT(NvmlDeviceT);
+impl Default for SafeNvmlDeviceT {
+    fn default() -> Self {
+        Self(std::ptr::null_mut())
     }
 }
 
-/// Shuts down the NVML library.
-/// This function wraps around the unsafe `nvmlShutdown` function and provides a safe interface.
-pub fn shutdown_nvml() -> Result<(), NvmlError> {
-    let result = unsafe { nvmlShutdown() };
-    match result {
-        NvmlReturnT::Success => Ok(()),
-        _ => Err(NvmlError::from(result)),
+#[derive(Debug)]
+pub struct Nvml;
+impl Nvml {
+    /// Initializes the NVML library.
+    /// This function wraps around the unsafe `nvmlInit` function and provides a safe interface.
+    pub fn init_nvml(&self) -> Result<(), NvmlError> {
+        let result = unsafe { nvmlInit() };
+        match result {
+            NvmlReturnT::Success => Ok(()),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Shuts down the NVML library.
+    /// This function wraps around the unsafe `nvmlShutdown` function and provides a safe interface.
+    pub fn shutdown_nvml(&self) -> Result<(), NvmlError> {
+        let result = unsafe { nvmlShutdown() };
+        match result {
+            NvmlReturnT::Success => Ok(()),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Get the number of devices
+    /// This function wraps around the unsafe `nvmlDeviceGetCount` function and provides a safe interface.
+    pub fn device_get_count(&self) -> Result<u32, NvmlError> {
+        let mut count: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetCount(&mut count) };
+        match result {
+            NvmlReturnT::Success => Ok(count),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Get the handle of a device
+    /// This function wraps around the unsafe `nvmlDeviceGetCount` function and provides a safe interface.
+    pub fn get_handle_by_index(&self, index: u32) -> Result<SafeNvmlDeviceT, NvmlError> {
+        let mut device: NvmlDeviceT = std::ptr::null_mut();
+        let result = unsafe { nvmlDeviceGetHandleByIndex(index, &mut device) };
+        match result {
+            NvmlReturnT::Success => Ok(SafeNvmlDeviceT(device)),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Get the index of a device
+    /// This function wraps around the unsafe `nvmlDeviceGetCount` function and provides a safe interface.
+    pub fn device_get_index(&self, index: u32, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+        let mut index: c_uint = index;
+        let result = unsafe { nvmlDeviceGetIndex(device.0, &mut index) };
+        match result {
+            NvmlReturnT::Success => Ok(index),
+            _ => Err(NvmlError::from(result)),
+        }
     }
 }

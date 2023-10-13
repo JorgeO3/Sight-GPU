@@ -1,5 +1,4 @@
 #![allow(unused)]
-
 use libc::{c_char, c_uint, c_ulonglong, c_void};
 
 /// Maximum length for GPU-related names (e.g., device names).
@@ -33,7 +32,67 @@ const NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE: usize = 16;
 const NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE: usize = 32;
 
 /// Rust representation of the NVML type `nvmlDevice_t`.
-type NvmlDeviceT = *mut c_void;
+// pub type NvmlDeviceT = *mut c_void;
+
+#[repr(C)]
+pub struct NvmlDeviceOpaque {
+    _data: [u8; 0],
+    _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
+}
+
+pub type NvmlDeviceT = *mut NvmlDeviceOpaque;
+
+/// Structure representing the memory information of a GPU device.
+///
+/// This structure provides details about the total, free, and used memory
+/// in bytes on a specific GPU. This allows monitoring and management tasks
+/// to gauge memory utilization and availability.
+#[repr(C)]
+pub struct NvmlMemoryT {
+    /// Total installed memory in bytes.
+    total: c_ulonglong,
+
+    /// Total free memory in bytes.
+    free: c_ulonglong,
+
+    /// Total memory currently in use in bytes.
+    used: c_ulonglong,
+}
+
+/// Structure representing the utilization rates of a GPU device.
+///
+/// This structure provides percentage values indicating how much of the GPU's
+/// capabilities are being used. This includes both the GPU's core and its memory.
+/// It provides a snapshot of the current load on the GPU.
+#[repr(C)]
+pub struct NvmlUtilizationT {
+    /// GPU core utilization rate as a percentage.
+    gpu: c_uint,
+
+    /// GPU memory utilization rate as a percentage.
+    memory: c_uint,
+}
+
+/// Structure representing information about a process utilizing a GPU device.
+///
+/// This structure gives details about a specific process that is running
+/// computations on a GPU. This includes the process's ID, how much GPU memory
+/// it's using, and other related details. This is useful for monitoring and
+/// managing individual processes' GPU usage.
+#[repr(C)]
+pub struct NvmlProcessInfoT {
+    /// Process ID of the application.
+    pid: c_uint,
+
+    /// Amount of GPU memory in bytes used by the process.
+    used_gpu_memory: c_ulonglong,
+
+    /// GPU instance ID associated with this process.
+    gpu_instance_id: c_uint,
+
+    /// Compute instance ID associated with this process.
+    compute_instance_id: c_uint,
+}
 
 /// Enumeration representing the return codes from NVML.
 ///
@@ -128,58 +187,6 @@ pub enum NvmlReturnT {
     ErrorUnknown = 999,
 }
 
-/// Structure representing the memory information of a GPU device.
-///
-/// This structure provides details about the total, free, and used memory
-/// in bytes on a specific GPU. This allows monitoring and management tasks
-/// to gauge memory utilization and availability.
-#[repr(C)]
-pub struct NvmlMemoryT {
-    /// Total installed memory in bytes.
-    total: c_ulonglong,
-
-    /// Total free memory in bytes.
-    free: c_ulonglong,
-
-    /// Total memory currently in use in bytes.
-    used: c_ulonglong,
-}
-
-/// Structure representing the utilization rates of a GPU device.
-///
-/// This structure provides percentage values indicating how much of the GPU's
-/// capabilities are being used. This includes both the GPU's core and its memory.
-/// It provides a snapshot of the current load on the GPU.
-#[repr(C)]
-pub struct NvmlUtilizationT {
-    /// GPU core utilization rate as a percentage.
-    gpu: c_uint,
-
-    /// GPU memory utilization rate as a percentage.
-    memory: c_uint,
-}
-
-/// Structure representing information about a process utilizing a GPU device.
-///
-/// This structure gives details about a specific process that is running
-/// computations on a GPU. This includes the process's ID, how much GPU memory
-/// it's using, and other related details. This is useful for monitoring and
-/// managing individual processes' GPU usage.
-#[repr(C)]
-pub struct NvmlProcessInfoT {
-    /// Process ID of the application.
-    pid: c_uint,
-
-    /// Amount of GPU memory in bytes used by the process.
-    used_gpu_memory: c_ulonglong,
-
-    /// GPU instance ID associated with this process.
-    gpu_instance_id: c_uint,
-
-    /// Compute instance ID associated with this process.
-    compute_instance_id: c_uint,
-}
-
 // External bindings to the NVIDIA Management Library (NVML).
 //
 // This block provides Rust-friendly interfaces to the functions exposed by
@@ -206,7 +213,7 @@ extern "C" {
     /// Retrieves a device handle based on its index.
     ///
     /// This handle can then be used in subsequent NVML calls. 
-    pub fn nvmlDeviceGetHandleByIndex(index: c_uint, device: NvmlDeviceT) -> NvmlReturnT;
+    pub fn nvmlDeviceGetHandleByIndex(index: c_uint, device: *mut NvmlDeviceT) -> NvmlReturnT;
 
     /// Retrieves the name of a system process based on its ID.
     ///
