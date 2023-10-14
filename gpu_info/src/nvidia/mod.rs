@@ -139,7 +139,9 @@ impl Default for SafeNvmlDeviceT {
 pub struct Nvml;
 impl Nvml {
     /// Initializes the NVML library.
-    /// This function wraps around the unsafe `nvmlInit` function and provides a safe interface.
+    ///
+    /// This method provides a safe interface to initialize the NVML library. It wraps
+    /// the unsafe `nvmlInit` function.
     pub fn init_nvml(&self) -> Result<(), NvmlError> {
         let result = unsafe { nvmlInit() };
         match result {
@@ -149,7 +151,9 @@ impl Nvml {
     }
 
     /// Shuts down the NVML library.
-    /// This function wraps around the unsafe `nvmlShutdown` function and provides a safe interface.
+    ///
+    /// This method provides a safe interface to shut down the NVML library. It wraps
+    /// the unsafe `nvmlShutdown` function.
     pub fn shutdown_nvml(&self) -> Result<(), NvmlError> {
         let result = unsafe { nvmlShutdown() };
         match result {
@@ -158,8 +162,10 @@ impl Nvml {
         }
     }
 
-    /// Get the number of devices
-    /// This function wraps around the unsafe `nvmlDeviceGetCount` function and provides a safe interface.
+    /// Retrieves the number of devices.
+    ///
+    /// This method provides a safe interface to get the number of devices. It wraps
+    /// the unsafe `nvmlDeviceGetCount` function.
     pub fn device_get_count(&self) -> Result<u32, NvmlError> {
         let mut count: c_uint = 0;
         let result = unsafe { nvmlDeviceGetCount(&mut count) };
@@ -169,8 +175,10 @@ impl Nvml {
         }
     }
 
-    /// Get the handle of a device
-    /// This function wraps around the unsafe `nvmlDeviceGetCount` function and provides a safe interface.
+    /// Retrieves a handle for a device by its index.
+    ///
+    /// This method provides a safe interface to get a device handle by its index. It wraps
+    /// the unsafe `nvmlDeviceGetHandleByIndex` function.
     pub fn get_handle_by_index(&self, index: u32) -> Result<SafeNvmlDeviceT, NvmlError> {
         let mut device: NvmlDeviceT = std::ptr::null_mut();
         let result = unsafe { nvmlDeviceGetHandleByIndex(index, &mut device) };
@@ -180,14 +188,39 @@ impl Nvml {
         }
     }
 
-    /// Get the index of a device
-    /// This function wraps around the unsafe `nvmlDeviceGetCount` function and provides a safe interface.
-    pub fn device_get_index(&self, index: u32, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
-        let mut index: c_uint = index;
+    /// Retrieves the index of a device.
+    ///
+    /// This method provides a safe interface to get the index of a device. It wraps
+    /// the unsafe `nvmlDeviceGetIndex` function.
+    pub fn device_get_index(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+        let mut index: c_uint = 0;
         let result = unsafe { nvmlDeviceGetIndex(device.0, &mut index) };
         match result {
             NvmlReturnT::Success => Ok(index),
             _ => Err(NvmlError::from(result)),
         }
+    }
+
+    /// Retrieves the process name for a given PID.
+    ///
+    /// This method provides a safe interface to get the name of the process corresponding
+    /// to a PID. It wraps the unsafe `nvmlSystemGetProcessName` function.
+    pub fn system_get_process_name(&self, pid: u32) -> Result<String, NvmlError> {
+        let mut name: [i8; 64] = [0; 64];
+        let result = unsafe { nvmlSystemGetProcessName(pid, name.as_mut_ptr(), 64) };
+        let name = self.i8_to_string(&name);
+
+        match result {
+            NvmlReturnT::Success => Ok(name),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    fn i8_to_string(&self, s: &[i8]) -> String {
+        // TODO: Add pointer validation
+        unsafe { std::ffi::CStr::from_ptr(s.as_ptr() as *const _) }
+            .to_str()
+            .expect("Failed to convert i8 to string")
+            .into()
     }
 }
