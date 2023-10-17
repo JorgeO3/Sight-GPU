@@ -210,7 +210,7 @@ extern "C" {
     /// Retrieves the count of GPU devices.
     ///
     /// Writes the device count into the provided pointer.
-    pub fn nvmlDeviceGetCount(deviceCount: *mut c_uint) -> NvmlReturnT;
+    pub fn nvmlDeviceGetCount(device_count: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves a device handle based on its index.
     ///
@@ -235,7 +235,7 @@ extern "C" {
     /// Retrieves the maximum PCIe link generation supported by the device.
     ///
     /// Writes the maximum link generation into the provided pointer.
-    pub fn nvmlDeviceGetMaxPcieLinkGeneration(device: NvmlDeviceT, maxLinkGen: *mut c_uint) -> NvmlReturnT;
+    pub fn nvmlDeviceGetMaxPcieLinkGeneration(device: NvmlDeviceT, max_link_gen: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves memory information for a GPU device.
     ///
@@ -250,17 +250,17 @@ extern "C" {
     /// Retrieves the maximum clock information for a specified type.
     ///
     /// Writes the maximum clock information into the provided pointer.
-    pub fn nvmlDeviceGetMaxClockInfo(device: NvmlDeviceT, clockType: c_uint, clockMHz: *mut c_uint) -> NvmlReturnT;
+    pub fn nvmlDeviceGetMaxClockInfo(device: NvmlDeviceT, clock_type: c_uint, clock_mhz: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current clock information for a specified type.
     ///
     /// Writes the current clock information into the provided pointer.
-    pub fn nvmlDeviceGetClockInfo(device: NvmlDeviceT, clockType: c_uint, clockMHz: *mut c_uint) -> NvmlReturnT;
+    pub fn nvmlDeviceGetClockInfo(device: NvmlDeviceT, clock_type: c_uint, clock_mhz: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current temperature of a GPU device for a specified sensor type.
     ///
     /// Writes the temperature into the provided pointer.
-    pub fn nvmlDeviceGetTemperature(device: NvmlDeviceT, sensorType: c_uint, temp: *mut c_uint) -> NvmlReturnT;
+    pub fn nvmlDeviceGetTemperature(device: NvmlDeviceT, sensor_type: c_uint, temp: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current fan speed of a GPU device.
     ///
@@ -285,12 +285,12 @@ extern "C" {
     /// Retrieves information about compute processes running on a GPU device.
     ///
     /// Writes the processes' information into the provided structure.
-    pub fn nvmlDeviceGetComputeRunningProcesses(device: NvmlDeviceT, infoCount: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
+    pub fn nvmlDeviceGetComputeRunningProcesses(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
 
     /// Retrieves information about graphics processes running on a GPU device.
     ///
     /// Writes the processes' information into the provided structure.
-    pub fn nvmlDeviceGetGraphicsRunningProcesses(device: NvmlDeviceT, infoCount: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
+    pub fn nvmlDeviceGetGraphicsRunningProcesses(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
 }
 
 #[derive(Debug, Error)]
