@@ -1,4 +1,4 @@
-use libc::{c_char, c_uint, c_ulonglong};
+use libc::{c_char, c_uint, c_ulonglong, clock_t};
 use thiserror::Error;
 
 /// Maximum length for GPU-related names (e.g., device names).
@@ -415,6 +415,29 @@ impl From<NvmlReturnT> for NvmlError {
     }
 }
 
+/// Enumeration representing the types of sensors available on a GPU device.
+///
+/// Each variant corresponds to a specific sensor type that can be queried
+/// for a GPU device. These can be used to determine which sensors are available
+/// and to query for specific sensor information.
+pub enum NvmlClockTypeT {
+    /// Graphics clock domain.
+    Graphics = 0,
+
+    /// SM clock domain.
+    SM = 1,
+
+    /// Memory clock domain.
+    Memory = 2,
+
+    /// Video encoder/decoder clock domain.
+    Video = 3,
+
+    /// Count of clock types.
+    Count = 4,
+}
+
+/// Safe wrapper for the NVML type `nvmlDevice_t`.
 #[derive(Debug)]
 pub struct SafeNvmlDeviceT(NvmlDeviceT);
 impl Default for SafeNvmlDeviceT {
@@ -555,12 +578,101 @@ impl Nvml {
 
     /// Retrieves the power management limit of a device in millivolts.
     ///
-    /// Provides a safe interface wrapping the unsafe `nvmlDeviceGetPowerManagementLimit` function.
+    /// This method provides a safe interface to obtain the power management limit of a device.
+    /// It wraps the unsafe `nvmlDeviceGetPowerManagementLimit` function.
     pub fn device_get_power_management_limit(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
         let mut limit: c_uint = 0;
         let result = unsafe { nvmlDeviceGetPowerManagementLimit(device.0, &mut limit) };
         match result {
             NvmlReturnT::Success => Ok(limit),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the current clock information for a specified type.
+    ///
+    /// This method provides a safe interface to obtain the current clock information for a specified type.
+    /// It wraps the unsafe `nvmlDeviceGetClockInfo` function.
+    pub fn device_get_max_clock_info(
+        &self,
+        device: &SafeNvmlDeviceT,
+        clock_type: NvmlClockTypeT,
+    ) -> Result<u32, NvmlError> {
+        let mut clock_mhz: c_uint = 0;
+        let clock_type = clock_type as c_uint;
+        let result = unsafe { nvmlDeviceGetMaxClockInfo(device.0, clock_type, &mut clock_mhz) };
+        match result {
+            NvmlReturnT::Success => Ok(clock_mhz),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the current clock information for a specified type.
+    ///
+    /// This method provides a safe interface to obtain the current clock information for a specified type.
+    /// It wraps the unsafe `nvmlDeviceGetClockInfo` function.
+    pub fn device_get_clock_info(
+        &self,
+        device: &SafeNvmlDeviceT,
+        clock_type: NvmlClockTypeT,
+    ) -> Result<u32, NvmlError> {
+        let mut clock_mhz: c_uint = 0;
+        let clock_type = clock_type as c_uint;
+        let result = unsafe { nvmlDeviceGetClockInfo(device.0, clock_type, &mut clock_mhz) };
+        match result {
+            NvmlReturnT::Success => Ok(clock_mhz),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the current temperature of a device for a specified sensor type.
+    ///
+    /// This method provides a safe interface to obtain the current temperature of a device for a specified sensor type.
+    /// It wraps the unsafe `nvmlDeviceGetTemperature` function.
+    pub fn device_get_temperature(&self, device: &SafeNvmlDeviceT, sensor_type: u32) -> Result<u32, NvmlError> {
+        let mut temp: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetTemperature(device.0, sensor_type, &mut temp) };
+        match result {
+            NvmlReturnT::Success => Ok(temp),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the current fan speed of a device.
+    ///
+    /// This method provides a safe interface to obtain the current fan speed of a device.
+    /// It wraps the unsafe `nvmlDeviceGetFanSpeed` function.
+    pub fn device_get_fan_speed(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+        let mut speed: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetFanSpeed(device.0, &mut speed) };
+        match result {
+            NvmlReturnT::Success => Ok(speed),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the current power usage of a device.
+    ///
+    /// This method provides a safe interface to obtain the current power usage of a device.
+    /// It wraps the unsafe `nvmlDeviceGetPowerUsage` function.
+    pub fn device_get_power_usage(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+        let mut power: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetPowerUsage(device.0, &mut power) };
+        match result {
+            NvmlReturnT::Success => Ok(power),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the PCIe throughput of a device for a specified counter.
+    ///
+    /// This method provides a safe interface to obtain the PCIe throughput of a device for a specified counter.
+    /// It wraps the unsafe `nvmlDeviceGetPcieThroughput` function.
+    pub fn device_get_pcie_throughput(&self, device: &SafeNvmlDeviceT, counter: u32) -> Result<u32, NvmlError> {
+        let mut value: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetPcieThroughput(device.0, counter, &mut value) };
+        match result {
+            NvmlReturnT::Success => Ok(value),
             _ => Err(NvmlError::from(result)),
         }
     }
