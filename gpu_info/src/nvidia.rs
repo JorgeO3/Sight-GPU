@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 use libc::{c_char, c_uint, c_ulonglong};
 use thiserror::Error;
 
@@ -34,8 +32,6 @@ const NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE: usize = 16;
 const NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE: usize = 32;
 
 /// Rust representation of the NVML type `nvmlDevice_t`.
-// pub type NvmlDeviceT = *mut c_void;
-
 #[repr(C)]
 pub struct NvmlDeviceOpaque {
     _data: [u8; 0],
@@ -424,11 +420,10 @@ impl Default for SafeNvmlDeviceT {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Nvml;
 impl Nvml {
     fn i8_to_string(&self, s: &[i8]) -> String {
-        // TODO: Add pointer validation
         unsafe { std::ffi::CStr::from_ptr(s.as_ptr() as *const _) }
             .to_str()
             .expect("Failed to convert i8 to string")
@@ -485,6 +480,37 @@ impl Nvml {
         }
     }
 
+    /// Retrieves the process name for a given PID.
+    ///
+    /// This method provides a safe interface to get the name of the process corresponding
+    /// to a PID. It wraps the unsafe `nvmlSystemGetProcessName` function.
+    pub fn system_get_process_name(&self, pid: u32) -> Result<String, NvmlError> {
+        let mut name: [i8; MAX_NAME_LENGTH] = [0; MAX_NAME_LENGTH];
+        let result = unsafe { nvmlSystemGetProcessName(pid, name.as_mut_ptr(), 64) };
+        let name = self.i8_to_string(&name);
+
+        match result {
+            NvmlReturnT::Success => Ok(name),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the name of a given device.
+    ///
+    /// This method provides a safe interface to obtain the name of a specific device
+    /// represented by the `SafeNvmlDeviceT` handle. The method wraps the unsafe 
+    /// `nvmlDeviceGetName` function from the NVML library.
+    pub fn device_get_name(&self, device: &SafeNvmlDeviceT) -> Result<String, NvmlError> {
+        let mut name: [i8; MAX_NAME_LENGTH] = [0; MAX_NAME_LENGTH];
+        let result = unsafe { nvmlDeviceGetName(device.0, name.as_mut_ptr(), 64) };
+        let name = self.i8_to_string(&name);
+
+        match result {
+            NvmlReturnT::Success => Ok(name),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
     /// Retrieves the index of a device.
     ///
     /// This method provides a safe interface to get the index of a device. It wraps
@@ -498,18 +524,4 @@ impl Nvml {
         }
     }
 
-    /// Retrieves the process name for a given PID.
-    ///
-    /// This method provides a safe interface to get the name of the process corresponding
-    /// to a PID. It wraps the unsafe `nvmlSystemGetProcessName` function.
-    pub fn system_get_process_name(&self, pid: u32) -> Result<String, NvmlError> {
-        let mut name: [i8; 64] = [0; 64];
-        let result = unsafe { nvmlSystemGetProcessName(pid, name.as_mut_ptr(), 64) };
-        let name = self.i8_to_string(&name);
-
-        match result {
-            NvmlReturnT::Success => Ok(name),
-            _ => Err(NvmlError::from(result)),
-        }
-    }
 }
