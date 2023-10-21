@@ -27,7 +27,8 @@ typedef struct
     uint64_t txBytesRate;
     double gpuUsagePercentage;
     uint64_t usedMemory;
-    nvmlProcessInfo_t processes[MAX_PROCESS_COUNT];
+    nvmlProcessInfo_t computeProcesses[MAX_PROCESS_COUNT];
+    nvmlProcessInfo_t graphicsProcesses[MAX_PROCESS_COUNT];
     uint32_t processCount;
 } DeviceDynamicInfo;
 

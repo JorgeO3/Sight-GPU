@@ -119,7 +119,8 @@ DeviceDynamicInfo *fetch_all_dynamic_device_info(unsigned int *deviceCount)
         nvmlMemory_t memory;
         nvmlDeviceGetMemoryInfo(device, &memory);
         infoArray[i].usedMemory = memory.used;
-        nvmlDeviceGetComputeRunningProcesses(device, &(infoArray[i].processCount), infoArray[i].processes);
+        nvmlDeviceGetComputeRunningProcesses(device, &(infoArray[i].processCount), infoArray[i].computeProcesses);
+        nvmlDeviceGetGraphicsRunningProcesses(device, &(infoArray[i].processCount), infoArray[i].graphicsProcesses);
     }
 
     nvmlShutdown();

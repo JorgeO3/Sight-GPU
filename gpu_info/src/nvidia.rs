@@ -1,4 +1,4 @@
-use libc::{c_char, c_uint, c_ulonglong, clock_t};
+use libc::{c_char, c_uint, c_ulonglong};
 use thiserror::Error;
 
 /// Maximum length for GPU-related names (e.g., device names).
@@ -6,7 +6,7 @@ use thiserror::Error;
 /// This constant defines the upper limit for the length of strings
 /// that represent names related to the GPU. This might be used, for example,
 /// to allocate buffers for reading GPU device names.
-const MAX_NAME_LENGTH: usize = 96;
+pub const MAX_NAME_LENGTH: usize = 96;
 
 /// Maximum number of processes that can be tracked for GPU usage.
 ///
@@ -14,14 +14,14 @@ const MAX_NAME_LENGTH: usize = 96;
 /// provides an upper limit on the number of processes that can be
 /// reported in a single query. Useful for allocating buffer space
 /// or setting boundaries on loops that iterate over processes.
-const MAX_PROCESS_COUNT: usize = 100;
+pub const MAX_PROCESS_COUNT: usize = 100;
 
 /// Maximum length for a PCI bus ID, version 2.
 ///
 /// This constant defines the buffer size required to store
 /// a PCI bus ID string in its version 2 format. This can be important
 /// for compatibility and interoperability concerns.
-const NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE: usize = 16;
+pub const NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE: usize = 16;
 
 /// Maximum length for a PCI bus ID.
 ///
@@ -29,7 +29,7 @@ const NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE: usize = 16;
 /// buffer size needed to store a PCI bus ID string. It's used
 /// in scenarios where the specific version of the PCI bus ID format
 /// isn't known in advance.
-const NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE: usize = 32;
+pub const NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE: usize = 32;
 
 /// Rust representation of the NVML type `nvmlDevice_t`.
 #[repr(C)]
@@ -80,10 +80,10 @@ pub struct NvmlUtilizationT {
 /// it's using, and other related details. This is useful for monitoring and
 /// managing individual processes' GPU usage.
 #[repr(C)]
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct NvmlProcessInfoT {
     /// Process ID of the application.
-    pid: c_uint,
+    pub pid: c_uint,
 
     /// Amount of GPU memory in bytes used by the process.
     used_gpu_memory: c_ulonglong,
@@ -284,7 +284,7 @@ extern "C" {
     /// Retrieves information about compute processes running on a GPU device.
     ///
     /// Writes the processes' information into the provided structure.
-    pub fn nvmlDeviceGetComputeRunningProcesses(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
+    pub fn nvmlDeviceGetComputeRunningProcesses_v3(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
 
     /// Retrieves information about graphics processes running on a GPU device.
     ///
@@ -673,6 +673,54 @@ impl Nvml {
         let result = unsafe { nvmlDeviceGetPcieThroughput(device.0, counter, &mut value) };
         match result {
             NvmlReturnT::Success => Ok(value),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the current utilization rates of a device.
+    ///
+    /// This method provides a safe interface to obtain the current utilization rates of a device.
+    /// It wraps the unsafe `nvmlDeviceGetUtilizationRates` function.
+    pub fn device_get_utilization_rates(&self, device: &SafeNvmlDeviceT) -> Result<NvmlUtilizationT, NvmlError> {
+        let mut utilization: NvmlUtilizationT = NvmlUtilizationT::default();
+        let result = unsafe { nvmlDeviceGetUtilizationRates(device.0, &mut utilization) };
+        match result {
+            NvmlReturnT::Success => Ok(utilization),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves information about compute processes running on a device.
+    ///
+    /// This method provides a safe interface to obtain information about compute processes running on a device.
+    /// It wraps the unsafe `nvmlDeviceGetComputeRunningProcesses` function.
+    pub fn device_get_compute_running_processes(
+        &self,
+        device: &SafeNvmlDeviceT,
+    ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
+        let mut infos: Vec<NvmlProcessInfoT> = Vec::with_capacity(MAX_PROCESS_COUNT);
+        let mut info_count: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetComputeRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
+        match result {
+            NvmlReturnT::Success => Ok(infos),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves information about graphics processes running on a device.
+    ///
+    /// This method provides a safe interface to obtain information about graphics processes running on a device.
+    /// It wraps the unsafe `nvmlDeviceGetGraphicsRunningProcesses` function.
+    pub fn device_get_graphics_running_processes(
+        &self,
+        device: &SafeNvmlDeviceT,
+    ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
+        let mut info_count: c_uint = MAX_PROCESS_COUNT as c_uint;
+        let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] = [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
+        let result = unsafe { nvmlDeviceGetGraphicsRunningProcesses(device.0, &mut info_count, infos.as_mut_ptr()) };
+
+        match result {
+            NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
             _ => Err(NvmlError::from(result)),
         }
     }

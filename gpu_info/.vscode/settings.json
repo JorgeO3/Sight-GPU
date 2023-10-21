@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "nvidia.h": "c"
+        "nvidia.h": "c",
+        "stdio.h": "c"
     }
 }
