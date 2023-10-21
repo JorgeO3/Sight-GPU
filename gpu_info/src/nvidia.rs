@@ -498,7 +498,7 @@ impl Nvml {
     /// Retrieves the name of a given device.
     ///
     /// This method provides a safe interface to obtain the name of a specific device
-    /// represented by the `SafeNvmlDeviceT` handle. The method wraps the unsafe 
+    /// represented by the `SafeNvmlDeviceT` handle. The method wraps the unsafe
     /// `nvmlDeviceGetName` function from the NVML library.
     pub fn device_get_name(&self, device: &SafeNvmlDeviceT) -> Result<String, NvmlError> {
         let mut name: [i8; MAX_NAME_LENGTH] = [0; MAX_NAME_LENGTH];
@@ -524,4 +524,16 @@ impl Nvml {
         }
     }
 
+    /// Retrieves the maximum PCIe generation supported by the device.
+    ///
+    /// This method provides a safe interface to get the maximum PCIe generation the device supports.
+    /// It wraps the unsafe `nvmlDeviceGetMaxPcieLinkGeneration` function.
+    pub fn device_get_pcie_version(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+        let mut max_link_gen: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetMaxPcieLinkGeneration(device.0, &mut max_link_gen) };
+        match result {
+            NvmlReturnT::Success => Ok(max_link_gen),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
 }
