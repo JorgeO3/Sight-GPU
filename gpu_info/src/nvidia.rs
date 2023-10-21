@@ -46,6 +46,7 @@ pub type NvmlDeviceT = *mut NvmlDeviceOpaque;
 /// in bytes on a specific GPU. This allows monitoring and management tasks
 /// to gauge memory utilization and availability.
 #[repr(C)]
+#[derive(Debug, Default)]
 pub struct NvmlMemoryT {
     /// Total installed memory in bytes.
     total: c_ulonglong,
@@ -63,6 +64,7 @@ pub struct NvmlMemoryT {
 /// capabilities are being used. This includes both the GPU's core and its memory.
 /// It provides a snapshot of the current load on the GPU.
 #[repr(C)]
+#[derive(Debug, Default)]
 pub struct NvmlUtilizationT {
     /// GPU core utilization rate as a percentage.
     gpu: c_uint,
@@ -78,6 +80,7 @@ pub struct NvmlUtilizationT {
 /// it's using, and other related details. This is useful for monitoring and
 /// managing individual processes' GPU usage.
 #[repr(C)]
+#[derive(Debug, Default)]
 pub struct NvmlProcessInfoT {
     /// Process ID of the application.
     pid: c_uint,
@@ -533,6 +536,31 @@ impl Nvml {
         let result = unsafe { nvmlDeviceGetMaxPcieLinkGeneration(device.0, &mut max_link_gen) };
         match result {
             NvmlReturnT::Success => Ok(max_link_gen),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the memory information of a device.
+    ///
+    /// This method provides a safe interface to obtain detailed memory-related information
+    /// for the specified device. It wraps the unsafe `nvmlDeviceGetMemoryInfo` function.
+    pub fn device_get_memory_info(&self, device: &SafeNvmlDeviceT) -> Result<NvmlMemoryT, NvmlError> {
+        let mut memory: NvmlMemoryT = NvmlMemoryT::default();
+        let result = unsafe { nvmlDeviceGetMemoryInfo(device.0, &mut memory) };
+        match result {
+            NvmlReturnT::Success => Ok(memory),
+            _ => Err(NvmlError::from(result)),
+        }
+    }
+
+    /// Retrieves the power management limit of a device in millivolts.
+    ///
+    /// Provides a safe interface wrapping the unsafe `nvmlDeviceGetPowerManagementLimit` function.
+    pub fn device_get_power_management_limit(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+        let mut limit: c_uint = 0;
+        let result = unsafe { nvmlDeviceGetPowerManagementLimit(device.0, &mut limit) };
+        match result {
+            NvmlReturnT::Success => Ok(limit),
             _ => Err(NvmlError::from(result)),
         }
     }
