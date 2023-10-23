@@ -80,19 +80,20 @@ pub struct NvmlUtilizationT {
 /// it's using, and other related details. This is useful for monitoring and
 /// managing individual processes' GPU usage.
 #[repr(C)]
+#[allow(non_snake_case)]
 #[derive(Debug, Default, Clone, Copy)]
 pub struct NvmlProcessInfoT {
     /// Process ID of the application.
-    pub pid: c_uint,
+    pid: c_uint,
 
     /// Amount of GPU memory in bytes used by the process.
-    used_gpu_memory: c_ulonglong,
+    usedGpuMemory: c_ulonglong,
 
     /// GPU instance ID associated with this process.
-    gpu_instance_id: c_uint,
+    gpuInstanceId: c_uint,
 
     /// Compute instance ID associated with this process.
-    compute_instance_id: c_uint,
+    computeInstanceId: c_uint,
 }
 
 /// Enumeration representing the return codes from NVML.
@@ -199,7 +200,7 @@ extern "C" {
     /// Initializes the NVML library.
     ///
     /// This function should be called once before invoking any other NVML API.
-    pub fn nvmlInit() -> NvmlReturnT;
+    pub fn nvmlInit_v2() -> NvmlReturnT;
 
     /// Shuts down the NVML library.
     ///
@@ -209,12 +210,12 @@ extern "C" {
     /// Retrieves the count of GPU devices.
     ///
     /// Writes the device count into the provided pointer.
-    pub fn nvmlDeviceGetCount(device_count: *mut c_uint) -> NvmlReturnT;
+    pub fn nvmlDeviceGetCount_v2(device_count: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves a device handle based on its index.
     ///
     /// This handle can then be used in subsequent NVML calls. 
-    pub fn nvmlDeviceGetHandleByIndex(index: c_uint, device: *mut NvmlDeviceT) -> NvmlReturnT;
+    pub fn nvmlDeviceGetHandleByIndex_v2(index: c_uint, device: *mut NvmlDeviceT) -> NvmlReturnT;
 
     /// Retrieves the name of a system process based on its ID.
     ///
@@ -289,7 +290,7 @@ extern "C" {
     /// Retrieves information about graphics processes running on a GPU device.
     ///
     /// Writes the processes' information into the provided structure.
-    pub fn nvmlDeviceGetGraphicsRunningProcesses(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
+    pub fn nvmlDeviceGetGraphicsRunningProcesses_v3(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
 }
 
 #[derive(Debug, Error)]
@@ -461,7 +462,7 @@ impl Nvml {
     /// This method provides a safe interface to initialize the NVML library. It wraps
     /// the unsafe `nvmlInit` function.
     pub fn init_nvml(&self) -> Result<(), NvmlError> {
-        let result = unsafe { nvmlInit() };
+        let result = unsafe { nvmlInit_v2() };
         match result {
             NvmlReturnT::Success => Ok(()),
             _ => Err(NvmlError::from(result)),
@@ -486,7 +487,7 @@ impl Nvml {
     /// the unsafe `nvmlDeviceGetCount` function.
     pub fn device_get_count(&self) -> Result<u32, NvmlError> {
         let mut count: c_uint = 0;
-        let result = unsafe { nvmlDeviceGetCount(&mut count) };
+        let result = unsafe { nvmlDeviceGetCount_v2(&mut count) };
         match result {
             NvmlReturnT::Success => Ok(count),
             _ => Err(NvmlError::from(result)),
@@ -499,7 +500,7 @@ impl Nvml {
     /// the unsafe `nvmlDeviceGetHandleByIndex` function.
     pub fn get_handle_by_index(&self, index: u32) -> Result<SafeNvmlDeviceT, NvmlError> {
         let mut device: NvmlDeviceT = std::ptr::null_mut();
-        let result = unsafe { nvmlDeviceGetHandleByIndex(index, &mut device) };
+        let result = unsafe { nvmlDeviceGetHandleByIndex_v2(index, &mut device) };
         match result {
             NvmlReturnT::Success => Ok(SafeNvmlDeviceT(device)),
             _ => Err(NvmlError::from(result)),
@@ -576,7 +577,7 @@ impl Nvml {
         }
     }
 
-    /// Retrieves the power management limit of a device in millivolts.
+    /// Retrieves the power management limit of a device in milli volts.
     ///
     /// This method provides a safe interface to obtain the power management limit of a device.
     /// It wraps the unsafe `nvmlDeviceGetPowerManagementLimit` function.
@@ -699,7 +700,7 @@ impl Nvml {
         device: &SafeNvmlDeviceT,
     ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
         let mut infos: Vec<NvmlProcessInfoT> = Vec::with_capacity(MAX_PROCESS_COUNT);
-        let mut info_count: c_uint = 0;
+        let mut info_count: c_uint = 10;
         let result = unsafe { nvmlDeviceGetComputeRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
         match result {
             NvmlReturnT::Success => Ok(infos),
@@ -717,7 +718,8 @@ impl Nvml {
     ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
         let mut info_count: c_uint = MAX_PROCESS_COUNT as c_uint;
         let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] = [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
-        let result = unsafe { nvmlDeviceGetGraphicsRunningProcesses(device.0, &mut info_count, infos.as_mut_ptr()) };
+        let result = unsafe { nvmlDeviceGetGraphicsRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
+        println!("info_count: {}", info_count);
 
         match result {
             NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
