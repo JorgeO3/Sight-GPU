@@ -568,7 +568,10 @@ impl Nvml {
     ///
     /// This method provides a safe interface to obtain detailed memory-related information
     /// for the specified device. It wraps the unsafe `nvmlDeviceGetMemoryInfo` function.
-    pub fn device_get_memory_info(&self, device: &SafeNvmlDeviceT) -> Result<NvmlMemoryT, NvmlError> {
+    pub fn device_get_memory_info(
+        &self,
+        device: &SafeNvmlDeviceT,
+    ) -> Result<NvmlMemoryT, NvmlError> {
         let mut memory: NvmlMemoryT = NvmlMemoryT::default();
         let result = unsafe { nvmlDeviceGetMemoryInfo(device.0, &mut memory) };
         match result {
@@ -581,7 +584,10 @@ impl Nvml {
     ///
     /// This method provides a safe interface to obtain the power management limit of a device.
     /// It wraps the unsafe `nvmlDeviceGetPowerManagementLimit` function.
-    pub fn device_get_power_management_limit(&self, device: &SafeNvmlDeviceT) -> Result<u32, NvmlError> {
+    pub fn device_get_power_management_limit(
+        &self,
+        device: &SafeNvmlDeviceT,
+    ) -> Result<u32, NvmlError> {
         let mut limit: c_uint = 0;
         let result = unsafe { nvmlDeviceGetPowerManagementLimit(device.0, &mut limit) };
         match result {
@@ -630,7 +636,11 @@ impl Nvml {
     ///
     /// This method provides a safe interface to obtain the current temperature of a device for a specified sensor type.
     /// It wraps the unsafe `nvmlDeviceGetTemperature` function.
-    pub fn device_get_temperature(&self, device: &SafeNvmlDeviceT, sensor_type: u32) -> Result<u32, NvmlError> {
+    pub fn device_get_temperature(
+        &self,
+        device: &SafeNvmlDeviceT,
+        sensor_type: u32,
+    ) -> Result<u32, NvmlError> {
         let mut temp: c_uint = 0;
         let result = unsafe { nvmlDeviceGetTemperature(device.0, sensor_type, &mut temp) };
         match result {
@@ -669,7 +679,11 @@ impl Nvml {
     ///
     /// This method provides a safe interface to obtain the PCIe throughput of a device for a specified counter.
     /// It wraps the unsafe `nvmlDeviceGetPcieThroughput` function.
-    pub fn device_get_pcie_throughput(&self, device: &SafeNvmlDeviceT, counter: u32) -> Result<u32, NvmlError> {
+    pub fn device_get_pcie_throughput(
+        &self,
+        device: &SafeNvmlDeviceT,
+        counter: u32,
+    ) -> Result<u32, NvmlError> {
         let mut value: c_uint = 0;
         let result = unsafe { nvmlDeviceGetPcieThroughput(device.0, counter, &mut value) };
         match result {
@@ -682,7 +696,10 @@ impl Nvml {
     ///
     /// This method provides a safe interface to obtain the current utilization rates of a device.
     /// It wraps the unsafe `nvmlDeviceGetUtilizationRates` function.
-    pub fn device_get_utilization_rates(&self, device: &SafeNvmlDeviceT) -> Result<NvmlUtilizationT, NvmlError> {
+    pub fn device_get_utilization_rates(
+        &self,
+        device: &SafeNvmlDeviceT,
+    ) -> Result<NvmlUtilizationT, NvmlError> {
         let mut utilization: NvmlUtilizationT = NvmlUtilizationT::default();
         let result = unsafe { nvmlDeviceGetUtilizationRates(device.0, &mut utilization) };
         match result {
@@ -700,8 +717,11 @@ impl Nvml {
         device: &SafeNvmlDeviceT,
     ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
         let mut info_count: c_uint = MAX_PROCESS_COUNT as c_uint;
-        let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] = [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
-        let result = unsafe { nvmlDeviceGetComputeRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
+        let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] =
+            [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
+        let result = unsafe {
+            nvmlDeviceGetComputeRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr())
+        };
         match result {
             NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
             _ => Err(NvmlError::from(result)),
@@ -717,8 +737,11 @@ impl Nvml {
         device: &SafeNvmlDeviceT,
     ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
         let mut info_count: c_uint = MAX_PROCESS_COUNT as c_uint;
-        let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] = [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
-        let result = unsafe { nvmlDeviceGetGraphicsRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
+        let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] =
+            [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
+        let result = unsafe {
+            nvmlDeviceGetGraphicsRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr())
+        };
         match result {
             NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
             _ => Err(NvmlError::from(result)),
