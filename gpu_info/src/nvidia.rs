@@ -699,11 +699,11 @@ impl Nvml {
         &self,
         device: &SafeNvmlDeviceT,
     ) -> Result<Vec<NvmlProcessInfoT>, NvmlError> {
-        let mut infos: Vec<NvmlProcessInfoT> = Vec::with_capacity(MAX_PROCESS_COUNT);
-        let mut info_count: c_uint = 10;
+        let mut info_count: c_uint = MAX_PROCESS_COUNT as c_uint;
+        let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] = [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
         let result = unsafe { nvmlDeviceGetComputeRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
         match result {
-            NvmlReturnT::Success => Ok(infos),
+            NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
             _ => Err(NvmlError::from(result)),
         }
     }
@@ -719,8 +719,6 @@ impl Nvml {
         let mut info_count: c_uint = MAX_PROCESS_COUNT as c_uint;
         let mut infos: [NvmlProcessInfoT; MAX_PROCESS_COUNT] = [NvmlProcessInfoT::default(); MAX_PROCESS_COUNT];
         let result = unsafe { nvmlDeviceGetGraphicsRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr()) };
-        println!("info_count: {}", info_count);
-
         match result {
             NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
             _ => Err(NvmlError::from(result)),
