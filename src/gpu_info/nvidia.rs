@@ -214,7 +214,7 @@ extern "C" {
 
     /// Retrieves a device handle based on its index.
     ///
-    /// This handle can then be used in subsequent NVML calls. 
+    /// This handle can then be used in subsequent NVML calls.
     pub fn nvmlDeviceGetHandleByIndex_v2(index: c_uint, device: *mut NvmlDeviceT) -> NvmlReturnT;
 
     /// Retrieves the name of a system process based on its ID.
@@ -441,6 +441,7 @@ pub enum NvmlClockTypeT {
 /// Safe wrapper for the NVML type `nvmlDevice_t`.
 #[derive(Debug)]
 pub struct SafeNvmlDeviceT(NvmlDeviceT);
+
 impl Default for SafeNvmlDeviceT {
     fn default() -> Self {
         Self(std::ptr::null_mut())
@@ -449,6 +450,7 @@ impl Default for SafeNvmlDeviceT {
 
 #[derive(Debug, Default)]
 pub struct Nvml;
+
 impl Nvml {
     fn i8_to_string(&self, s: &[i8]) -> String {
         unsafe { std::ffi::CStr::from_ptr(s.as_ptr() as *const _) }
@@ -743,7 +745,7 @@ impl Nvml {
             nvmlDeviceGetGraphicsRunningProcesses_v3(device.0, &mut info_count, infos.as_mut_ptr())
         };
         match result {
-            NvmlReturnT::Success => Ok(infos[0..=info_count as usize].to_vec()),
+            NvmlReturnT::Success => Ok(infos[0..info_count as usize].to_vec()),
             _ => Err(NvmlError::from(result)),
         }
     }

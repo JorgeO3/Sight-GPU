@@ -15,3 +15,5 @@ pub mod handler;
 
 /// Custom widgets.
 pub mod widgets;
+
+pub mod gpu_info;

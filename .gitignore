@@ -17,5 +17,8 @@ coverage.profdata
 lcov.info
 
 # Files specific to JetBrains IDEs
-.idea/
+*.idea/
 *.iml
+
+# Vscode
+*.vscode/
