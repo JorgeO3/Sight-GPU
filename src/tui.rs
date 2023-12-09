@@ -48,7 +48,7 @@ impl<B: Backend> Tui<B> {
 
     /// [`Draw`] the terminal interface by [`rendering`] the widgets.
     ///
-    /// [`Draw`]: tui::Terminal::draw
+    /// [`Draw`]: ratatui::Terminal::draw
     /// [`rendering`]: crate::ui:render
     pub fn draw(&mut self, app: &mut App) -> AppResult<()> {
         self.terminal.draw(|frame| ui::render(app, frame))?;
@@ -61,7 +61,7 @@ impl<B: Backend> Tui<B> {
     /// the terminal properties if unexpected errors occur.
     fn reset() -> AppResult<()> {
         terminal::disable_raw_mode()?;
-        crossterm::execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture)?;
+        crossterm::execute!(io::stderr(), LeaveAlternateScreen, DisableMouseCapture)?;
         Ok(())
     }
 

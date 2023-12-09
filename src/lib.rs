@@ -16,4 +16,5 @@ pub mod handler;
 /// Custom widgets.
 pub mod widgets;
 
+/// Safe wrappers around c, libraries
 pub mod gpu_info;

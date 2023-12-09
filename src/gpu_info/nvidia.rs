@@ -33,12 +33,12 @@ pub const NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE: usize = 32;
 
 /// Rust representation of the NVML type `nvmlDevice_t`.
 #[repr(C)]
-pub struct NvmlDeviceOpaque {
+struct NvmlDeviceOpaque {
     _data: [u8; 0],
     _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
 }
 
-pub type NvmlDeviceT = *mut NvmlDeviceOpaque;
+type NvmlDeviceT = *mut NvmlDeviceOpaque;
 
 /// Structure representing the memory information of a GPU device.
 ///
@@ -200,97 +200,97 @@ extern "C" {
     /// Initializes the NVML library.
     ///
     /// This function should be called once before invoking any other NVML API.
-    pub fn nvmlInit_v2() -> NvmlReturnT;
+    fn nvmlInit_v2() -> NvmlReturnT;
 
     /// Shuts down the NVML library.
     ///
     /// This function should be called once after finishing with the NVML API to free allocated resources.
-    pub fn nvmlShutdown() -> NvmlReturnT;
+    fn nvmlShutdown() -> NvmlReturnT;
 
     /// Retrieves the count of GPU devices.
     ///
     /// Writes the device count into the provided pointer.
-    pub fn nvmlDeviceGetCount_v2(device_count: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetCount_v2(device_count: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves a device handle based on its index.
     ///
     /// This handle can then be used in subsequent NVML calls.
-    pub fn nvmlDeviceGetHandleByIndex_v2(index: c_uint, device: *mut NvmlDeviceT) -> NvmlReturnT;
+    fn nvmlDeviceGetHandleByIndex_v2(index: c_uint, device: *mut NvmlDeviceT) -> NvmlReturnT;
 
     /// Retrieves the name of a system process based on its ID.
     ///
     /// Writes the process name into the provided buffer.
-    pub fn nvmlSystemGetProcessName(pid: c_uint, name: *mut c_char, lenght: c_uint) -> NvmlReturnT;
+    fn nvmlSystemGetProcessName(pid: c_uint, name: *mut c_char, lenght: c_uint) -> NvmlReturnT;
 
     /// Retrieves the name of a GPU device.
     ///
     /// Writes the device name into the provided buffer.
-    pub fn nvmlDeviceGetName(device: NvmlDeviceT, name: *mut c_char, lenght: c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetName(device: NvmlDeviceT, name: *mut c_char, lenght: c_uint) -> NvmlReturnT;
 
     /// Retrieves the index of a GPU device.
     ///
     /// Writes the device index into the provided pointer.
-    pub fn nvmlDeviceGetIndex(device: NvmlDeviceT, index: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetIndex(device: NvmlDeviceT, index: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the maximum PCIe link generation supported by the device.
     ///
     /// Writes the maximum link generation into the provided pointer.
-    pub fn nvmlDeviceGetMaxPcieLinkGeneration(device: NvmlDeviceT, max_link_gen: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetMaxPcieLinkGeneration(device: NvmlDeviceT, max_link_gen: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves memory information for a GPU device.
     ///
     /// Writes the memory information into the provided structure.
-    pub fn nvmlDeviceGetMemoryInfo(device: NvmlDeviceT, memory: *mut NvmlMemoryT) -> NvmlReturnT;
+    fn nvmlDeviceGetMemoryInfo(device: NvmlDeviceT, memory: *mut NvmlMemoryT) -> NvmlReturnT;
 
     /// Retrieves the power management limit of a GPU device.
     ///
     /// Writes the power limit into the provided pointer.
-    pub fn nvmlDeviceGetPowerManagementLimit(device: NvmlDeviceT, limit: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetPowerManagementLimit(device: NvmlDeviceT, limit: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the maximum clock information for a specified type.
     ///
     /// Writes the maximum clock information into the provided pointer.
-    pub fn nvmlDeviceGetMaxClockInfo(device: NvmlDeviceT, clock_type: c_uint, clock_mhz: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetMaxClockInfo(device: NvmlDeviceT, clock_type: c_uint, clock_mhz: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current clock information for a specified type.
     ///
     /// Writes the current clock information into the provided pointer.
-    pub fn nvmlDeviceGetClockInfo(device: NvmlDeviceT, clock_type: c_uint, clock_mhz: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetClockInfo(device: NvmlDeviceT, clock_type: c_uint, clock_mhz: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current temperature of a GPU device for a specified sensor type.
     ///
     /// Writes the temperature into the provided pointer.
-    pub fn nvmlDeviceGetTemperature(device: NvmlDeviceT, sensor_type: c_uint, temp: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetTemperature(device: NvmlDeviceT, sensor_type: c_uint, temp: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current fan speed of a GPU device.
     ///
     /// Writes the fan speed into the provided pointer.
-    pub fn nvmlDeviceGetFanSpeed(device: NvmlDeviceT, speed: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetFanSpeed(device: NvmlDeviceT, speed: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current power usage of a GPU device.
     ///
     /// Writes the power usage into the provided pointer.
-    pub fn nvmlDeviceGetPowerUsage(device: NvmlDeviceT, power: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetPowerUsage(device: NvmlDeviceT, power: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the PCIe throughput of a GPU device for a specified counter.
     ///
     /// Writes the PCIe throughput into the provided pointer.
-    pub fn nvmlDeviceGetPcieThroughput(device: NvmlDeviceT, counter: c_uint, value: *mut c_uint) -> NvmlReturnT;
+    fn nvmlDeviceGetPcieThroughput(device: NvmlDeviceT, counter: c_uint, value: *mut c_uint) -> NvmlReturnT;
 
     /// Retrieves the current utilization rates (for GPU and memory) of a GPU device.
     ///
     /// Writes the utilization rates into the provided structure.
-    pub fn nvmlDeviceGetUtilizationRates(device: NvmlDeviceT, utilization: *mut NvmlUtilizationT) -> NvmlReturnT;
+    fn nvmlDeviceGetUtilizationRates(device: NvmlDeviceT, utilization: *mut NvmlUtilizationT) -> NvmlReturnT;
 
     /// Retrieves information about compute processes running on a GPU device.
     ///
     /// Writes the processes' information into the provided structure.
-    pub fn nvmlDeviceGetComputeRunningProcesses_v3(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
+    fn nvmlDeviceGetComputeRunningProcesses_v3(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
 
     /// Retrieves information about graphics processes running on a GPU device.
     ///
     /// Writes the processes' information into the provided structure.
-    pub fn nvmlDeviceGetGraphicsRunningProcesses_v3(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
+    fn nvmlDeviceGetGraphicsRunningProcesses_v3(device: NvmlDeviceT, info_count: *mut c_uint, infos: *mut NvmlProcessInfoT) -> NvmlReturnT;
 }
 
 #[derive(Debug, Error)]
@@ -385,33 +385,33 @@ impl From<NvmlReturnT> for NvmlError {
     fn from(err: NvmlReturnT) -> Self {
         match err {
             NvmlReturnT::Success => NvmlError::NvmlSuccess,
-            NvmlReturnT::ErrorUninitialized => NvmlError::NVMLERRORUNINITIALIZED,
-            NvmlReturnT::ErrorInvalidArgument => NvmlError::NVMLERRORINVALIDARGUMENT,
-            NvmlReturnT::ErrorNotSupported => NvmlError::NVMLERRORNOTSUPPORTED,
-            NvmlReturnT::ErrorNoPermission => NvmlError::NVMLERRORNOPERMISSION,
-            NvmlReturnT::ErrorAlreadyInitialized => NvmlError::NVMLERRORALREADYINITIALIZED,
-            NvmlReturnT::ErrorNotFound => NvmlError::NVMLERRORNOTFOUND,
-            NvmlReturnT::ErrorInsufficientSize => NvmlError::NVMLERRORINSUFFICIENTSIZE,
-            NvmlReturnT::ErrorInsufficientPower => NvmlError::NVMLERRORINSUFFICIENTPOWER,
-            NvmlReturnT::ErrorDriverNotLoaded => NvmlError::NVMLERRORDRIVERNOTLOADED,
-            NvmlReturnT::ErrorTimeout => NvmlError::NVMLERRORTIMEOUT,
-            NvmlReturnT::ErrorIrqIssue => NvmlError::NVMLERRORIRQISSUE,
-            NvmlReturnT::ErrorLibraryNotFound => NvmlError::NVMLERRORLIBRARYNOTFOUND,
-            NvmlReturnT::ErrorFunctionNotFound => NvmlError::NVMLERRORFUNCTIONNOTFOUND,
-            NvmlReturnT::ErrorCorruptedInforom => NvmlError::NVMLERRORCORRUPTEDINFOROM,
-            NvmlReturnT::ErrorGpuIsLost => NvmlError::NVMLERRORGPUISLOST,
-            NvmlReturnT::ErrorResetRequired => NvmlError::NVMLERRORRESETREQUIRED,
-            NvmlReturnT::ErrorOperatingSystem => NvmlError::NVMLERROROPERATINGSYSTEM,
-            NvmlReturnT::ErrorLibRmVersionMismatch => NvmlError::NVMLERRORLIBRMVERSIONMISMATCH,
             NvmlReturnT::ErrorInUse => NvmlError::NVMLERRORINUSE,
             NvmlReturnT::ErrorMemory => NvmlError::NVMLERRORMEMORY,
             NvmlReturnT::ErrorNoData => NvmlError::NVMLERRORNODATA,
-            NvmlReturnT::ErrorVgpuEccNotSupported => NvmlError::NVMLERRORVGPUECCNOTSUPPORTED,
-            NvmlReturnT::ErrorInsufficientResources => NvmlError::NVMLERRORINSUFFICIENTRESOURCES,
-            NvmlReturnT::ErrorFreqNotSupported => NvmlError::NVMLERRORFREQNOTSUPPORTED,
-            NvmlReturnT::ErrorArgumentVersionMismatch => NvmlError::NVMLERRORARGUMENTVERSIONMISMATCH,
-            NvmlReturnT::ErrorDeprecated => NvmlError::NVMLERRORDEPRECATED,
+            NvmlReturnT::ErrorTimeout => NvmlError::NVMLERRORTIMEOUT,
             NvmlReturnT::ErrorUnknown => NvmlError::NVMLERRORUNKNOWN,
+            NvmlReturnT::ErrorNotFound => NvmlError::NVMLERRORNOTFOUND,
+            NvmlReturnT::ErrorIrqIssue => NvmlError::NVMLERRORIRQISSUE,
+            NvmlReturnT::ErrorGpuIsLost => NvmlError::NVMLERRORGPUISLOST,
+            NvmlReturnT::ErrorDeprecated => NvmlError::NVMLERRORDEPRECATED,
+            NvmlReturnT::ErrorNotSupported => NvmlError::NVMLERRORNOTSUPPORTED,
+            NvmlReturnT::ErrorNoPermission => NvmlError::NVMLERRORNOPERMISSION,
+            NvmlReturnT::ErrorResetRequired => NvmlError::NVMLERRORRESETREQUIRED,
+            NvmlReturnT::ErrorUninitialized => NvmlError::NVMLERRORUNINITIALIZED,
+            NvmlReturnT::ErrorDriverNotLoaded => NvmlError::NVMLERRORDRIVERNOTLOADED,
+            NvmlReturnT::ErrorLibraryNotFound => NvmlError::NVMLERRORLIBRARYNOTFOUND,
+            NvmlReturnT::ErrorOperatingSystem => NvmlError::NVMLERROROPERATINGSYSTEM,
+            NvmlReturnT::ErrorInvalidArgument => NvmlError::NVMLERRORINVALIDARGUMENT,
+            NvmlReturnT::ErrorFunctionNotFound => NvmlError::NVMLERRORFUNCTIONNOTFOUND,
+            NvmlReturnT::ErrorInsufficientSize => NvmlError::NVMLERRORINSUFFICIENTSIZE,
+            NvmlReturnT::ErrorCorruptedInforom => NvmlError::NVMLERRORCORRUPTEDINFOROM,
+            NvmlReturnT::ErrorFreqNotSupported => NvmlError::NVMLERRORFREQNOTSUPPORTED,
+            NvmlReturnT::ErrorInsufficientPower => NvmlError::NVMLERRORINSUFFICIENTPOWER,
+            NvmlReturnT::ErrorAlreadyInitialized => NvmlError::NVMLERRORALREADYINITIALIZED,
+            NvmlReturnT::ErrorVgpuEccNotSupported => NvmlError::NVMLERRORVGPUECCNOTSUPPORTED,
+            NvmlReturnT::ErrorLibRmVersionMismatch => NvmlError::NVMLERRORLIBRMVERSIONMISMATCH,
+            NvmlReturnT::ErrorInsufficientResources => NvmlError::NVMLERRORINSUFFICIENTRESOURCES,
+            NvmlReturnT::ErrorArgumentVersionMismatch => NvmlError::NVMLERRORARGUMENTVERSIONMISMATCH,
         }
     }
 }
@@ -448,7 +448,54 @@ impl Default for SafeNvmlDeviceT {
     }
 }
 
-#[derive(Debug, Default)]
+/// # Example usage
+/// ``` rust
+///use sight_gpu::gpu_info::Nvml;
+/// use sight_gpu::gpu_info::NvmlClockTypeT;
+///
+/// fn main() {
+///     let nvml = Nvml;
+///     nvml.init_nvml().unwrap();
+///     let result = nvml.device_get_count();
+///     let device_id = nvml.get_handle_by_index(0).unwrap();
+///     let process_name = nvml.system_get_process_name(2485);
+///     let device_name = nvml.device_get_name(&device_id);
+///     let memory_info = nvml.device_get_memory_info(&device_id);
+///     let power_usage = nvml.device_get_power_management_limit(&device_id);
+///     let max_clock_info = nvml.device_get_max_clock_info(&device_id, NvmlClockTypeT::Graphics);
+///     let clock_info = nvml.device_get_clock_info(&device_id, NvmlClockTypeT::Graphics);
+///     let device_temp = nvml.device_get_temperature(&device_id, 0);
+///     let device_fan_speed = nvml.device_get_fan_speed(&device_id);
+///     let device_power_usage = nvml.device_get_power_usage(&device_id);
+///     let device_pcie_throughput = nvml.device_get_pcie_throughput(&device_id, 0);
+///     let device_utilization_rates = nvml.device_get_utilization_rates(&device_id);
+///     let device_compute_processes = nvml.device_get_compute_running_processes(&device_id);
+///     let device_graphics_processes = nvml.device_get_graphics_running_processes(&device_id);
+///     nvml.shutdown_nvml().unwrap();
+///
+///     println!("result: {:?}", result);
+///     println!("&device_id: {:?}", &device_id);
+///     println!("process_name: {:?}", process_name);
+///     println!("device_name: {:?}", device_name);
+///     println!("memory_info: {:?}", memory_info);
+///     println!("power_usage: {:?}", power_usage);
+///     println!("max_clock_info: {:?}", max_clock_info);
+///     println!("clock_info: {:?}", clock_info);
+///     println!("device_temp: {:?}", device_temp);
+///     println!("device_fan_speed: {:?}", device_fan_speed);
+///     println!("device_power_usage: {:?}", device_power_usage);
+///     println!("device_pcie_throughput: {:?}", device_pcie_throughput);
+///     println!("device_utilization_rates: {:?}", device_utilization_rates);
+///     println!("device_graphics_processes: {:?}", device_graphics_processes);
+///     println!("device_compute_processes: {:?}", device_compute_processes);
+///
+///     for process in device_graphics_processes.unwrap().iter() {
+///         println!("process: {:?}", process);
+///     }
+/// }
+/// ```
+
+#[derive(Debug)]
 pub struct Nvml;
 
 impl Nvml {
