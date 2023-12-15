@@ -1,8 +1,11 @@
-use crate::app::AppResult;
-use crossterm::event::{self, Event as CrosstermEvent, KeyEvent, MouseEvent};
-use std::sync::mpsc;
 use std::thread;
+use std::sync::mpsc;
 use std::time::{Duration, Instant};
+
+use crossterm::event::{self, Event as CrosstermEvent, KeyEvent, MouseEvent};
+
+use super::app_backup::AppResult;
+
 
 /// Terminal events.
 #[derive(Clone, Copy, Debug)]
@@ -52,7 +55,7 @@ impl EventHandler {
                             CrosstermEvent::FocusLost => Ok(()),
                             CrosstermEvent::Paste(_) => unimplemented!(),
                         }
-                        .expect("failed to send terminal event")
+                            .expect("failed to send terminal event")
                     }
 
                     if last_tick.elapsed() >= tick_rate {
