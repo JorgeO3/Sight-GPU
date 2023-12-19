@@ -1,5 +1,6 @@
-use crate::app_backup::{App, AppResult};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+
+use super::app_backup::{App, AppResult};
 
 /// Handles the key events and updates the state of [`App`].
 pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
