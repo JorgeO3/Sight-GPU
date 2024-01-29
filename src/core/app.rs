@@ -1,10 +1,5 @@
-use std::{error, result};
-
-/// Application result type.
-pub type AppResult<T> = result::Result<T, Box<dyn error::Error>>;
-
 /// Application.
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
     /// Is the application running?
     pub running: bool,
@@ -12,12 +7,19 @@ pub struct App {
     pub counter: u8,
 }
 
-impl App {
-    pub fn new() -> Self {
+impl Default for App {
+    fn default() -> Self {
         Self {
             running: true,
             counter: 0,
         }
+    }
+}
+
+impl App {
+    /// Constructs a new instance of [`App`].
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// Handles the tick event of the terminal.

@@ -1,7 +1,5 @@
 fn main() {
-    let result: Result<(), ()> = Ok(());
-
-    if let Err(e) = result {
-        eprintln!("error: {e:?}");
+    if let Err(e) = sight_gpu::core::run() {
+        eprintln!("e = {:#?}", e);
     }
 }

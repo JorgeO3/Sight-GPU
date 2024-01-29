@@ -1,16 +1,11 @@
-// TODO [x] draw_cpu_graph
-// TODO [-] draw_disk_usage
-// TODO [-] draw_memory_usage
-// TODO [-] draw_components_temps
-// TODO [-] draw_network_usage
-// TODO [-] draw_list_process
+use ratatui::{
+    layout::Alignment,
+    style::{Color, Style},
+    widgets::{Block, BorderType, Borders, Paragraph},
+    Frame,
+};
 
-use ratatui::layout::Alignment;
-use ratatui::style::{Color, Style};
-use ratatui::widgets::{Block, BorderType, Borders, Paragraph};
-use ratatui::Frame;
-
-use super::app_backup::App;
+use crate::core::App;
 
 /// Renders the user interface widgets.
 pub fn render(app: &mut App, frame: &mut Frame) {

@@ -5,6 +5,7 @@ pub mod gpu_info;
 pub mod widgets;
 
 /// Aplication
-pub mod app;
+pub mod core;
 
-
+/// Predefined shorthands and types.
+pub mod prelude;
