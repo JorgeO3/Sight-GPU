@@ -17,6 +17,11 @@ exclude = ["/.github/*", "/Makefile.toml", "/clippy.toml", "/rustfmt.toml"]
 [lib]
 crate-type = ["lib"]
 
+[features]
+default = ["intel"]
+intel = []
+amd = []
+nvidia = []
 
 [dependencies]
 crossterm = "0.27.0"
@@ -25,5 +30,3 @@ libc = "0.2.148"
 thiserror = "1.0.48"
 clap = { version = "4.4.11", features = ["derive"] }
 anyhow = "1.0.79"
-
-[dev-dependencies]

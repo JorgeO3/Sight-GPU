@@ -3,7 +3,7 @@
 use libc::{c_char, c_uint, c_ulonglong};
 use thiserror::Error;
 
-#[link(name = "pcieaccess", kind = "dylib")]
+#[link(name = "pciaccess", kind = "dylib")]
 extern "C" {}
 
 struct IntelGpu;

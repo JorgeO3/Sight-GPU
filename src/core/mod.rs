@@ -30,7 +30,7 @@ pub fn run() -> Result<()> {
         use event::Event::*;
 
         match tui.events.next()? {
-            Tick => todo!(),
+            Tick => app.tick(),
             Key(_) => todo!(),
             Mouse(_) => todo!(),
             Resize(_, _) => todo!(),
