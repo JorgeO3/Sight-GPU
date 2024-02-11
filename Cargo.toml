@@ -18,7 +18,7 @@ exclude = ["/.github/*", "/Makefile.toml", "/clippy.toml", "/rustfmt.toml"]
 crate-type = ["lib"]
 
 [features]
-default = ["intel"]
+default = ["intel", "amd", "nvidia"]
 intel = []
 amd = []
 nvidia = []

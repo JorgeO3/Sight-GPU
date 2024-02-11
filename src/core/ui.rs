@@ -1,11 +1,9 @@
-use ratatui::{
-    layout::Alignment,
-    style::{Color, Style},
-    widgets::{Block, BorderType, Borders, Paragraph},
-    Frame,
-};
+use ratatui::style::{Color, Style};
+use ratatui::widgets::{Block, BorderType, Borders, Paragraph};
+use ratatui::{layout::Alignment, Frame};
 
-use crate::core::App;
+use crate::core::app::App;
+use ratatui::{prelude::*, text::Span, widgets::*};
 
 /// Renders the user interface widgets.
 pub fn render(app: &mut App, frame: &mut Frame) {

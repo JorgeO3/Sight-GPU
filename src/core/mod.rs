@@ -1,43 +1,17 @@
+/// Application state and logic.
 pub mod app;
+
+/// Event handling.
 pub mod event;
-pub mod handler;
+
+/// Terminal user interface.
 pub mod tui;
+
+/// User interface widgets.
 pub mod ui;
 
-use std::io;
+/// Event handlers.
+pub mod handler;
 
-use ratatui::backend::CrosstermBackend;
-use ratatui::Terminal;
-
-use crate::core::app::App;
-use crate::core::event::EventHandler;
-use crate::prelude::*;
-
-pub fn run() -> Result<()> {
-    // Initialize the application.
-    let mut app = App::new();
-
-    // Initialize the terminal.
-    let backend = CrosstermBackend::new(io::stderr());
-    let terminal = Terminal::new(backend)?;
-    let events = EventHandler::new(250);
-    let mut tui = tui::Tui::new(terminal, events);
-    tui.init()?;
-
-    // Start the main loop
-    while app.running {
-        tui.draw(&mut app)?;
-        use event::Event::*;
-
-        match tui.events.next()? {
-            Tick => app.tick(),
-            Key(_) => todo!(),
-            Mouse(_) => todo!(),
-            Resize(_, _) => todo!(),
-        }
-    }
-
-    // Exit the application.
-    tui.exit()?;
-    Ok(())
-}
+/// Custom widgets.
+pub mod widgets;

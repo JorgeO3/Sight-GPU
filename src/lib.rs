@@ -1,10 +1,7 @@
-/// Safe wrappers around c, libraries
+/// GPU information and utilities.
 pub mod gpu_info;
 
-/// Custom widgets.
-pub mod widgets;
-
-/// Aplication
+/// Core application logic.
 pub mod core;
 
 /// Predefined shorthands and types.

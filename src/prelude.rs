@@ -7,8 +7,8 @@ pub enum Error {
     #[error(transparent)]
     Io(#[from] std::io::Error),
     #[error(transparent)]
-    StdError(#[from] Box<dyn std::error::Error>),
-    #[error(transparent)]
+    // StdError(#[from] Box<dyn std::error::Error>),
+    // #[error(transparent)]
     StdSenderError(#[from] std::sync::mpsc::RecvError),
 }
 
